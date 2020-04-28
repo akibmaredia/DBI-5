@@ -1,0 +1,382 @@
+TC1
+enter: 
+
+Number of selects: 1
+Number of joins: 0
+
+PRINTING TREE IN ORDER:
+
+ ******************** 
+SELECT FILE operation
+INPUT PIPE ID : 0
+OUTPUT PIPE ID : 1
+Output Schema:
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+
+ ******************** 
+SELECT PIPE operation
+INPUT PIPE ID : 1
+OUTPUT PIPE ID : 2
+Output Schema:
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+CNF:
+	(n.n_name = UNITED STATES)
+
+ ******************** 
+PROJECT operation
+INPUT PIPE ID : 2
+OUTPUT PIPE ID : 3
+Output Schema:
+***************************************************************************************************************************
+TC2
+enter: 
+
+Number of selects: 1
+Number of joins: 1
+
+PRINTING TREE IN ORDER:
+
+ ******************** 
+SELECT FILE operation
+INPUT PIPE ID : 0
+OUTPUT PIPE ID : 1
+Output Schema:
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+
+ ******************** 
+SELECT PIPE operation
+INPUT PIPE ID : 1
+OUTPUT PIPE ID : 2
+Output Schema:
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+CNF:
+	(n.n_nationkey > 5)
+
+ ******************** 
+SELECT FILE operation
+INPUT PIPE ID : 0
+OUTPUT PIPE ID : 3
+Output Schema:
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+
+ ******************** 
+JOIN operation
+Left INPUT PIPE ID : 2
+Right INPUT PIPE ID : 3
+OUTPUT PIPE ID : 4
+Output Schema : 
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+CNF:
+	(n.n_regionkey = r.r_regionkey)
+
+ ******************** 
+PROJECT operation
+INPUT PIPE ID : 4
+OUTPUT PIPE ID : 5
+Output Schema:
+***************************************************************************************************************************
+TC3
+enter: 
+
+Number of selects: 0
+Number of joins: 1
+
+PRINTING TREE IN ORDER:
+
+ ******************** 
+SELECT FILE operation
+INPUT PIPE ID : 0
+OUTPUT PIPE ID : 1
+Output Schema:
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+
+ ******************** 
+SELECT PIPE operation
+INPUT PIPE ID : 1
+OUTPUT PIPE ID : 2
+Output Schema:
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+CNF:
+	(n.n_name = UNITED STATES)
+
+ ******************** 
+SELECT FILE operation
+INPUT PIPE ID : 0
+OUTPUT PIPE ID : 3
+Output Schema:
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+
+ ******************** 
+JOIN operation
+Left INPUT PIPE ID : 2
+Right INPUT PIPE ID : 3
+OUTPUT PIPE ID : 4
+Output Schema : 
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+CNF:
+	(n.n_regionkey = r.r_regionkey)
+
+ ******************************************* 
+SUM operation
+INPUT PIPE ID : 4
+OUTPUT PIPE ID : 5
+Function :
+	(n.n_nationkey)
+Output Schema : 
+	Att sum : INT
+***************************************************************************************************************************
+TC4
+enter: 
+
+Number of selects: 0
+Number of joins: 1
+
+GROUPING ON: n.n_regionkey
+
+PRINTING TREE IN ORDER:
+
+ ******************** 
+SELECT FILE operation
+INPUT PIPE ID : 0
+OUTPUT PIPE ID : 1
+Output Schema:
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+
+ ******************** 
+SELECT PIPE operation
+INPUT PIPE ID : 1
+OUTPUT PIPE ID : 2
+Output Schema:
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+CNF:
+	(n.n_name = UNITED STATES)
+
+ ******************** 
+SELECT FILE operation
+INPUT PIPE ID : 0
+OUTPUT PIPE ID : 3
+Output Schema:
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+
+ ******************** 
+JOIN operation
+Left INPUT PIPE ID : 2
+Right INPUT PIPE ID : 3
+OUTPUT PIPE ID : 4
+Output Schema : 
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+CNF:
+	(n.n_regionkey = r.r_regionkey)
+
+ ******************** 
+GROUP BY operation
+INPUT PIPE ID : 4
+OUTPUT PIPE ID : 5
+Output Schema : 
+	Att sum : INT
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+Function : 
+	(n.n_regionkey)
+OrderMaker : 
+NumAtts =     1
+  0:     3 Int
+
+ ******************************************* 
+SUM operation
+INPUT PIPE ID : 5
+OUTPUT PIPE ID : 6
+Function :
+	(n.n_regionkey)
+Output Schema : 
+	Att sum : INT
+***************************************************************************************************************************
+TC5
+enter: 
+
+Number of selects: 0
+Number of joins: 2
+
+GROUPING ON: r.r_regionkey
+
+PRINTING TREE IN ORDER:
+
+ ******************** 
+SELECT FILE operation
+INPUT PIPE ID : 0
+OUTPUT PIPE ID : 1
+Output Schema:
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+
+ ******************** 
+SELECT PIPE operation
+INPUT PIPE ID : 1
+OUTPUT PIPE ID : 2
+Output Schema:
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+CNF:
+	(n.n_nationkey > 10)
+
+ ******************** 
+SELECT FILE operation
+INPUT PIPE ID : 0
+OUTPUT PIPE ID : 3
+Output Schema:
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+
+ ******************** 
+SELECT FILE operation
+INPUT PIPE ID : 0
+OUTPUT PIPE ID : 4
+Output Schema:
+	Att c.c_custkey : INT
+	Att c.c_name : STRING
+	Att c.c_address : STRING
+	Att c.c_nationkey : INT
+	Att c.c_phone : STRING
+	Att c.c_acctbal : DOUBLE
+	Att c.c_mktsegment : STRING
+	Att c.c_comment : STRING
+
+ ******************** 
+JOIN operation
+Left INPUT PIPE ID : 2
+Right INPUT PIPE ID : 3
+OUTPUT PIPE ID : 5
+Output Schema : 
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+CNF:
+	(n.n_regionkey = r.r_regionkey)
+
+ ******************** 
+JOIN operation
+Left INPUT PIPE ID : 5
+Right INPUT PIPE ID : 4
+OUTPUT PIPE ID : 6
+Output Schema : 
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+	Att c.c_custkey : INT
+	Att c.c_name : STRING
+	Att c.c_address : STRING
+	Att c.c_nationkey : INT
+	Att c.c_phone : STRING
+	Att c.c_acctbal : DOUBLE
+	Att c.c_mktsegment : STRING
+	Att c.c_comment : STRING
+CNF:
+	(n.n_nationkey = c.c_nationkey)
+
+ ******************** 
+DISTINCT operation
+INPUT PIPE ID : 6
+OUTPUT PIPE ID : 7
+
+ ******************** 
+GROUP BY operation
+INPUT PIPE ID : 7
+OUTPUT PIPE ID : 8
+Output Schema : 
+	Att sum : INT
+	Att n.n_nationkey : INT
+	Att n.n_name : STRING
+	Att n.n_regionkey : INT
+	Att n.n_comment : STRING
+	Att r.r_regionkey : INT
+	Att r.r_name : STRING
+	Att r.r_comment : STRING
+	Att c.c_custkey : INT
+	Att c.c_name : STRING
+	Att c.c_address : STRING
+	Att c.c_nationkey : INT
+	Att c.c_phone : STRING
+	Att c.c_acctbal : DOUBLE
+	Att c.c_mktsegment : STRING
+	Att c.c_comment : STRING
+Function : 
+	(n.n_nationkey + r.r_regionkey)
+OrderMaker : 
+NumAtts =     1
+  0:     5 Int
+
+ ******************************************* 
+SUM operation
+INPUT PIPE ID : 8
+OUTPUT PIPE ID : 9
+Function :
+	(n.n_nationkey + r.r_regionkey)
+Output Schema : 
+	Att sum : INT
+***************************************************************************************************************************
