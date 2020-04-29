@@ -1,7 +1,7 @@
  
 %{
 
-	#include "ParseTree.h" 
+	#include "ParseTree.h"
 	#include <stdio.h>
 	#include <string.h>
 	#include <stdlib.h>
@@ -10,7 +10,7 @@
 	extern "C" int yylex();
 	extern "C" int yyparse();
 	extern "C" void yyerror(char *s);
-  
+
 	// these data structures hold the result of the parsing
 	struct FuncOperator *finalFunction; // the aggregate function (NULL if no agg)
 	struct TableList *tables; // the list of tables and aliases in the query
@@ -19,15 +19,15 @@
 	struct NameList *attsToSelect; // the set of attributes in the SELECT (NULL if no such atts)
 	int distinctAtts; // 1 if there is a DISTINCT in a non-aggregate query
 	int distinctFunc;  // 1 if there is a DISTINCT in an aggregate query
-	//add
-    std::string loadFileName; // save the insert file name
-    std::string tablename; // save the table to be inserted
-    std::string outputFile; // save filename of output, it could be none, string or stdout
-	struct AttrList *attrList;
-	struct NameList *sortList;
-    int commandType;
-    int dbfileType;
 
+    std::string tableName;
+    std::string tableFileToLoad;
+    std::string outputLocation;
+
+    struct AttrList *attrList;
+
+    // 1: CREATE, 2: INSERT, 3: DROP, 4: SET, 5: SELECT
+    int commandType;
 %}
 
 // this stores all of the types returned by production rules
@@ -42,30 +42,24 @@
 	struct NameList *myNames;
 	char *actualChars;
 	char whichOne;
-	//add
+
 	struct AttrList *myAttrList;
-	struct NameList *mySortList;
 }
 
+%token <actualChars> Name
+%token <actualChars> Float
+%token <actualChars> Int
+%token <actualChars> String
 %token CREATE
 %token TABLE
-%token ON
 %token HEAP
-%token SORTED
 %token INSERT
+%token INTO
 %token DROP
 %token SET
 %token OUTPUT
 %token STDOUT
 %token NONE
-%token UPDATE
-%token STATISTICS
-%token FOR
-%token INTO
-%token <actualChars> Name
-%token <actualChars> Float
-%token <actualChars> Int
-%token <actualChars> String
 %token SELECT
 %token GROUP
 %token DISTINCT
@@ -76,6 +70,7 @@
 %token AS
 %token AND
 %token OR
+%token QUIT
 
 %type <myOrList> OrList
 %type <myAndList> AndList
@@ -87,9 +82,8 @@
 %type <myTables> Tables
 %type <myBoolOperand> Literal
 %type <myNames> Atts
-//add
+
 %type <myAttrList> AttrList;
-%type <mySortList> SortList;
 
 %start SQL
 
@@ -103,67 +97,56 @@
 
 %%
 
-SQL: SELECT WhatIWant FROM Tables WHERE AndList
+SQL: SELECT WhatIWant FROM Tables WHERE AndList ';'
 {
 	tables = $4;
 	boolean = $6;
 	groupingAtts = NULL;
-	commandType = 4;
+	commandType = 5;
 }
 
-| SELECT WhatIWant FROM Tables WHERE AndList GROUP BY Atts
+| SELECT WhatIWant FROM Tables WHERE AndList GROUP BY Atts ';'
 {
 	tables = $4;
 	boolean = $6;
 	groupingAtts = $9;
-	commandType = 4;
-};
-
+	commandType = 5;
+}
 | CREATE TABLE Name '(' AttrList ')' AS HEAP ';'
 {
-	tablename = $3;
-	attrList = $5;
-    commandType = 0;
-    dbfileType = 0;
-}
-| CREATE TABLE Name '(' AttrList ')' AS SORTED ON SortList ';'
-{
-	tablename = $3;
-	attrList = $5;
-	sortList = $10;
-    commandType = 0;
-    dbfileType = 1;
+    tableName = $3;
+    attrList = $5;
+    commandType = 1;
 }
 | INSERT String INTO Name ';'
 {
-	loadFileName = $2;
-	tablename = $4;
-    commandType = 1;
+    tableFileToLoad = $2;
+    tableName = $4;
+    commandType = 2;
 }
 | DROP TABLE Name ';'
 {
-	tablename = $3;
-    commandType = 2;
+    tableName = $3;
+    commandType = 3;
 }
 | SET OUTPUT String ';'
 {
-	outputFile = $3;
-    commandType = 3;
+    outputLocation = $3;
+    commandType = 4;
 }
 | SET OUTPUT STDOUT ';'
 {
-	outputFile = "STDOUT";
-    commandType = 3;
+    outputLocation = "STDOUT";
+    commandType = 4;
 }
 | SET OUTPUT NONE ';'
 {
-	outputFile = "NONE";
-    commandType = 3;
+    outputLocation = "NONE";
+    commandType = 4;
 }
-| UPDATE STATISTICS FOR Tables ';'
+| QUIT
 {
-	tables = $4;
-    commandType = 5;
+    commandType = 6;
 };
 
 AttrList: Name Name
@@ -189,19 +172,6 @@ AttrList: Name Name
 	else if(strcmp($2,"STRING")==0)
 		$$->type = 2;
 	$$->next = $4;
-}
-
-SortList: Name
-{
-	$$ = (struct NameList *) malloc (sizeof (struct NameList));
-	$$->name = $1;
-	$$->next = NULL;
-}
-| Name ',' SortList
-{
-	$$ = (struct NameList *) malloc (sizeof (struct NameList));
-	$$->name = $1;
-	$$->next = $3;
 }
 
 WhatIWant: Function ',' Atts
@@ -477,4 +447,3 @@ Float
 ;
 
 %%
-

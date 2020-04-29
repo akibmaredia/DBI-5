@@ -39,11 +39,7 @@ void yyerror(char*s);
 
 "TABLE"         return(TABLE);
 
-"ON"            return(ON);
-
 "HEAP"          return(HEAP);
-
-"SORTED"        return(SORTED);
 
 "INSERT"        return(INSERT);
 
@@ -57,13 +53,7 @@ void yyerror(char*s);
 
 "STDOUT"        return(STDOUT);
 
-"NONE"          return(NONE);
-
-"UPDATE"        return(UPDATE);
-
-"STATISTICS"    return(STATISTICS);
-
-"for"			return(FOR);
+"NONE"        return(NONE);
 
 "SELECT"		return(SELECT);
 
@@ -84,6 +74,8 @@ void yyerror(char*s);
 "OR"			return(OR);
 
 "AS"			return(AS);
+
+"QUIT"          return(QUIT);
 
 "("			return('(');
 

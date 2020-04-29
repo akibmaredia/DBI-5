@@ -22,8 +22,14 @@ a2test.out: Record.o Comparison.o ComparisonEngine.o Schema.o File.o BigQ.o DBFi
 test.out: Record.o Comparison.o ComparisonEngine.o Schema.o File.o DBFile.o GenericDBFile.o HeapDBFile.o SortedDBFile.o RelOp.o Function.o BigQ.o Pipe.o mainScheme.o Statistics.o y.tab.o lex.yy.o test.o
 	$(CC) -o a42.out Record.o Comparison.o ComparisonEngine.o Schema.o File.o DBFile.o GenericDBFile.o HeapDBFile.o SortedDBFile.o RelOp.o Function.o BigQ.o mainScheme.o Pipe.o Statistics.o y.tab.o lex.yy.o test.o $(test_out_tag) -lpthread
 
+main: Record.o Comparison.o ComparisonEngine.o Schema.o File.o DBFile.o GenericDBFile.o HeapDBFile.o SortedDBFile.o RelOp.o Function.o BigQ.o Pipe.o Sql.o mainScheme.o Statistics.o y.tab.o lex.yy.o test.o
+	$(CC) -o a42.out Record.o Comparison.o ComparisonEngine.o Schema.o File.o DBFile.o GenericDBFile.o HeapDBFile.o SortedDBFile.o RelOp.o Function.o BigQ.o mainScheme.o Pipe.o Sql.o Statistics.o y.tab.o lex.yy.o test.o $(test_out_tag) -lpthread
+
 GTest.o:
 	$(CC) -g -c GTest.cc
+
+main.o: main.cc
+	$(CC) -g -c main.cc
 
 test.o: test.cc
 	$(CC) -g -c test.cc
@@ -78,6 +84,9 @@ Record.o: Record.cc
 
 Schema.o: Schema.cc
 	$(CC) -g -c Schema.cc
+
+Sql.o: Sql.cc
+	$(CC) -g -c Sql.cc
 
 y.tab.o: Parser.y
 	yacc -d Parser.y
